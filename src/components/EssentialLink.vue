@@ -12,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 
 export interface EssentialLinkProps {
