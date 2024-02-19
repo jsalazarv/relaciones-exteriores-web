@@ -1,6 +1,13 @@
 import { RouteRecordRaw } from 'vue-router';
+import LoginPage from 'pages/SignIn/SignIn.vue';
+import LoginLayout from 'layouts/LoginLayout.vue';
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    component: LoginLayout,
+    children: [{ path: '', component: LoginPage }],
+  },
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
