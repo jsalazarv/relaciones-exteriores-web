@@ -1,32 +1,71 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
+  <q-layout view="hHh lpR fFf" class="bg-grey-1">
+    <q-header elevated class="bg-white text-grey-8" height-hint="64">
+      <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
           dense
           round
-          icon="menu"
-          aria-label="Menu"
           @click="toggleLeftDrawer"
+          aria-label="Menu"
+          icon="menu"
+          class="q-mr-sm"
         />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-toolbar-title
+          v-if="$q.screen.gt.xs"
+          shrink
+          class="row items-center no-wrap"
+        >
+          <span class="q-ml-sm">Relaciones Exteriores</span>
+        </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-space />
+
+        <div class="q-gutter-sm row items-center no-wrap">
+          <q-btn
+            v-if="$q.screen.gt.sm"
+            round
+            dense
+            flat
+            color="text-grey-7"
+            icon="apps"
+          >
+            <q-tooltip>Google Apps</q-tooltip>
+          </q-btn>
+          <q-btn round dense flat color="grey-8" icon="notifications">
+            <q-badge color="red" text-color="white" floating> 2 </q-badge>
+            <q-tooltip>Notifications</q-tooltip>
+          </q-btn>
+          <q-btn round flat>
+            <q-avatar size="26px">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            </q-avatar>
+            <q-tooltip>Account</q-tooltip>
+          </q-btn>
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      class="bg-white"
+      :width="280"
+    >
+      <q-scroll-area class="fit">
+        <q-list padding class="text-grey-8">
+          <q-item-label header v-if="!$q.screen.gt.md"
+            >Relaciones Exteriores</q-item-label
+          >
+          <EssentialLink
+            v-for="link in essentialLinks"
+            :key="link.title"
+            v-bind="link"
+          />
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -34,7 +73,6 @@
     </q-page-container>
   </q-layout>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import EssentialLink, {
@@ -43,46 +81,16 @@ import EssentialLink, {
 
 const essentialLinks: EssentialLinkProps[] = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    title: 'Dashboard',
+    caption: 'Tablero de control',
+    icon: 'dashboard',
+    link: 'dashboard',
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
+    title: 'Empleados',
+    caption: 'Gestión de empleados',
+    icon: 'groups',
+    link: 'employees',
   },
 ];
 
