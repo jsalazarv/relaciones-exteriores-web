@@ -7,7 +7,13 @@
       </div>
     </q-card-section>
     <q-card-section>
-      <q-input dense outlined v-model="email" label="Correo electrónico" />
+      <q-input
+        dense
+        outlined
+        v-model="email"
+        label="Correo electrónico"
+        :disable="isPending"
+      />
       <q-input
         dense
         outlined
@@ -15,6 +21,7 @@
         v-model="password"
         type="password"
         label="Contraseña"
+        :disable="isPending"
       />
     </q-card-section>
     <q-card-section>
@@ -26,6 +33,9 @@
         label="INICIAR SESIÓN"
         no-caps
         class="full-width"
+        :loading="isPending"
+        :disable="isPending"
+        @click="onSubmit"
       ></q-btn>
     </q-card-section>
   </q-card>
@@ -33,9 +43,29 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useSignIn } from 'src/composables/useAuth';
+import Cookies from 'js-cookie';
+
+const { mutate, isPending } = useSignIn();
 
 const email = ref('');
 const password = ref('');
+
+const onSubmit = () => {
+  const formData = {
+    email: email.value,
+    password: password.value,
+  };
+
+  mutate(formData, {
+    onSuccess: (data) => {
+      Cookies.set('token', data.token);
+    },
+    onError: (error) => {
+      console.log('[ERROR]', error);
+    },
+  });
+};
 </script>
 
 <style>
