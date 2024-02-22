@@ -12,7 +12,7 @@
         outlined
         v-model="email"
         label="Correo electrónico"
-        :disable="isPending"
+        :disable="login.isPending.value"
       />
       <q-input
         dense
@@ -21,7 +21,7 @@
         v-model="password"
         type="password"
         label="Contraseña"
-        :disable="isPending"
+        :disable="login.isPending.value"
       />
     </q-card-section>
     <q-card-section>
@@ -33,8 +33,8 @@
         label="INICIAR SESIÓN"
         no-caps
         class="full-width"
-        :loading="isPending"
-        :disable="isPending"
+        :loading="login.isPending.value"
+        :disable="login.isPending.value"
         @click="onSubmit"
       ></q-btn>
     </q-card-section>
@@ -44,9 +44,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useSignIn } from 'src/composables/useAuth';
-import Cookies from 'js-cookie';
+import { useRouter } from 'vue-router';
 
-const { mutate, isPending } = useSignIn();
+const { login } = useSignIn();
+const router = useRouter();
 
 const email = ref('');
 const password = ref('');
@@ -57,12 +58,14 @@ const onSubmit = () => {
     password: password.value,
   };
 
-  mutate(formData, {
-    onSuccess: (data) => {
-      Cookies.set('token', data.token);
+  login.mutate(formData, {
+    onSuccess: () => {
+      console.log('[LOGIN SUCCESS]');
+      router.push({ name: 'dashboard' });
     },
     onError: (error) => {
-      console.log('[ERROR]', error);
+      console.log('[LOGIN ERROR]', error);
+      router.push({ name: 'login' });
     },
   });
 };

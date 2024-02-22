@@ -147,14 +147,14 @@ const rows = data?.value?.data.map((employee: IEmployee) => ({
 }));
 
 const onExport = () => {
-  //TODO: Implement export
+  console.log('[EXPORT EXCEL]'); //TODO: Implement export
 };
 
 const onEdit = (employee: IEmployee) => {
-  console.log('Edit', employee);
+  console.log('[EDIT EMPLOYEE]', employee);
 };
 
 const onDelete = (employee: IEmployee) => {
-  console.log('Delete', employee);
+  console.log('[DELETE EMPLOYEE]', employee);
 };
 </script>
