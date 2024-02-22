@@ -10,3 +10,12 @@ export const useEmployee = () => {
     queryFn: fetchAll,
   });
 };
+
+export const useEmployeeReport = () => {
+  const { fetchReport } = useEmployeesService();
+
+  return useQuery({
+    queryKey: ['employee-report'],
+    queryFn: fetchReport,
+  });
+};

@@ -10,6 +10,9 @@
             size="sm"
             no-caps
             style="border-radius: 8px; margin-right: 0.3rem"
+            @click="onExport"
+            :loading="isRefetchingReport"
+            :disable="isRefetchingReport"
           />
           <q-btn
             color="dark"
@@ -48,10 +51,15 @@
 </template>
 
 <script setup lang="ts">
-import { useEmployee } from 'src/composables/useEmployee';
+import { useEmployee, useEmployeeReport } from 'src/composables/useEmployee';
 import { IEmployee } from 'src/entities/employee';
 
 const { data } = useEmployee();
+const {
+  data: reportData,
+  refetch: refetchReport,
+  isRefetching: isRefetchingReport,
+} = useEmployeeReport();
 
 interface IColum {
   name: string;
@@ -137,6 +145,10 @@ const rows = data?.value?.data.map((employee: IEmployee) => ({
   ssn: employee.ssn,
   salary: employee.salary,
 }));
+
+const onExport = () => {
+  //TODO: Implement export
+};
 
 const onEdit = (employee: IEmployee) => {
   console.log('Edit', employee);
