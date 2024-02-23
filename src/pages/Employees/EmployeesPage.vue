@@ -41,25 +41,64 @@
               size="sm"
               color="grey"
               icon="delete"
-              @click="onDelete(props.row)"
+              @click="onShowModalDelete(props.row)"
             ></q-btn>
           </q-td>
         </template>
       </q-table>
     </div>
+
+    <q-dialog v-model="showDeleteDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          Eliminar empleado
+        </q-card-section>
+        <q-card-section>
+          <q-avatar
+            size="24px"
+            icon="signal_wifi_off"
+            color="red"
+            text-color="white"
+          />
+          <span class="q-ml-sm">
+            <pre>{{ selectedEmployee }}</pre>
+            Estas seguro de eliminar a {{ selectedEmployee.name }}
+            {{ selectedEmployee.last_name }}
+          </span>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Eliminar"
+            color="negative"
+            v-close-popup
+            @click="onDeleteSelectedEmployee(selectedEmployee)"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { useEmployee, useEmployeeReport } from 'src/composables/useEmployee';
+import { ref } from 'vue';
+import {
+  useEmployee,
+  useEmployeeDelete,
+  useEmployeeReport,
+} from 'src/composables/useEmployee';
 import { IEmployee } from 'src/entities/employee';
 
-const { data } = useEmployee();
+const { data, refetch } = useEmployee();
+const { mutate: deleteMutate } = useEmployeeDelete();
 const {
   data: reportData,
   refetch: refetchReport,
   isRefetching: isRefetchingReport,
 } = useEmployeeReport();
+const showDeleteDialog = ref(false);
+const selectedEmployee = ref({} as IEmployee);
 
 interface IColum {
   name: string;
@@ -71,6 +110,14 @@ interface IColum {
 }
 
 const columns: IColum[] = [
+  {
+    name: 'id',
+    required: true,
+    label: 'ID',
+    align: 'left',
+    field: (row: Partial<IEmployee>) => row.id,
+    sortable: true,
+  },
   {
     name: 'name',
     required: true,
@@ -136,6 +183,7 @@ const columns: IColum[] = [
 ];
 
 const rows = data?.value?.data.map((employee: IEmployee) => ({
+  id: employee.id,
   name: employee.name,
   last_name: employee.last_name,
   email: employee.email,
@@ -154,7 +202,23 @@ const onEdit = (employee: IEmployee) => {
   console.log('[EDIT EMPLOYEE]', employee);
 };
 
-const onDelete = (employee: IEmployee) => {
-  console.log('[DELETE EMPLOYEE]', employee);
+const onShowModalDelete = (employee: IEmployee) => {
+  showDeleteDialog.value = true;
+  selectedEmployee.value = employee;
+};
+
+const onDeleteSelectedEmployee = (employee: IEmployee) => {
+  console.log('[DELETE EMPLOYEE]', employee.id);
+  deleteMutate(employee.id, {
+    onSuccess: () => {
+      console.log('[SE ELIMINO EL EMPLEADO]');
+      refetch();
+      // TODO: Show error message in toast or snackbar
+    },
+    onError: (error) => {
+      console.log('[OCURRIO UN ERROR AL ELIMINAR]', error);
+      // TODO: Show error message in toast or snackbar
+    },
+  });
 };
 </script>

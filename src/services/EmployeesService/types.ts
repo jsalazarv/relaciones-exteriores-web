@@ -9,6 +9,9 @@ export interface IEmployeeListResponse {
   meta: IMeta;
 }
 
+export interface IDeleteEmployeeResponse {
+  message: string;
+}
 export interface IEmployeeReportResponse {
   data: File;
 }
