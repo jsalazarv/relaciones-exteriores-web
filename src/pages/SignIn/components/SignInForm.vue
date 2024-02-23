@@ -43,10 +43,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useSignIn } from 'src/composables/useAuth';
+import { useAuth } from 'src/composables/useAuth';
 import { useRouter } from 'vue-router';
 
-const { login } = useSignIn();
+const { login } = useAuth();
 const router = useRouter();
 
 const email = ref('');

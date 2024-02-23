@@ -1,5 +1,4 @@
 import { RouteRecordRaw } from 'vue-router';
-import Cookies from 'js-cookie';
 import SignIn from 'pages/SignIn/SignIn.vue';
 import LoginLayout from 'layouts/LoginLayout.vue';
 
@@ -17,16 +16,6 @@ const routes: RouteRecordRaw[] = [
         path: '/',
         name: 'dashboard',
         component: () => import('pages/Dashboard/DashboardPage.vue'),
-        // beforeEnter: (to, from, next) => {
-        //   if (Cookies.get('token') !== undefined) {
-        //     return false;
-        //   }
-        //   if (Cookies.get('token') === undefined) {
-        //     next({ name: 'login' });
-        //   }
-
-        //   next();
-        // },
       },
     ],
   },

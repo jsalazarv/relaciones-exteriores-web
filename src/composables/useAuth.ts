@@ -1,13 +1,14 @@
 import { useMutation } from '@tanstack/vue-query';
-import { useSignInService } from 'src/services/AuthService';
+import Cookies from 'js-cookie';
+
+import { useAuthService } from 'src/services/AuthService';
 import type {
   ISignInRequest,
   ISignInResponse,
 } from 'src/services/AuthService/types';
-import Cookies from 'js-cookie';
 
-export const useSignIn = () => {
-  const { signIn } = useSignInService();
+export const useAuth = () => {
+  const { signIn, verifyToken } = useAuthService();
 
   const login = useMutation({
     mutationFn: (data: ISignInRequest): Promise<ISignInResponse> =>
@@ -20,5 +21,20 @@ export const useSignIn = () => {
     },
   });
 
-  return { login };
+  const verifyAuthentication = async (): Promise<boolean> => {
+    const response: boolean = await verifyToken()
+      .then((res) => {
+        if (res?.message === 'Token is valid.') {
+          return true;
+        }
+        return false;
+      })
+      .catch(() => {
+        return false;
+      });
+
+    return response;
+  };
+
+  return { login, verifyAuthentication };
 };

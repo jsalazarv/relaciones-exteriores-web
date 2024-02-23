@@ -7,6 +7,7 @@ import {
 } from 'vue-router';
 
 import routes from './routes';
+import { useAuthStore } from 'src/stores/authStore';
 
 /*
  * If not building with SSR mode, you can
@@ -20,7 +21,9 @@ import routes from './routes';
 export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
+    : process.env.VUE_ROUTER_MODE === 'history'
+    ? createWebHistory
+    : createWebHashHistory;
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -31,6 +34,25 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
+
+  // Router.beforeEach((to, from, next) => {
+  //   const store = useAuthStore();
+
+  //   console.log('[ROUTER BEFORE EACH]', store.isAuthenticated);
+  //   if (to.meta?.public === true) {
+  //     return next();
+  //   }
+
+  //   if (to.name === 'login' && store.isAuthenticated) {
+  //     return next({ name: 'dashboard' });
+  //   }
+
+  //   if (to.name !== 'login' && !store.isAuthenticated) {
+  //     return next({ name: 'login' });
+  //   }
+
+  //   return next();
+  // });
 
   return Router;
 });
