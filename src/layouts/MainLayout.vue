@@ -74,16 +74,13 @@
   </q-layout>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { useAuth } from 'src/composables/useAuth';
-import { useAuthStore } from 'src/stores/authStore';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
 
 const { verifyAuthentication } = useAuth();
-const authStore = useAuthStore();
-const isAuthenticated = ref(false);
 const leftDrawerOpen = ref(false);
 
 const essentialLinks: EssentialLinkProps[] = [
@@ -105,14 +102,8 @@ const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
 
-const setSessionState = async () => {
-  const isAuthenticatedResponse = await verifyAuthentication();
-
-  isAuthenticated.value = isAuthenticatedResponse;
-  authStore.setSessionState(isAuthenticatedResponse);
-};
-
-onMounted(async () => {
-  setSessionState();
+onBeforeMount(async () => {
+  console.log('MainLayout onBeforeMount');
+  await verifyAuthentication();
 });
 </script>

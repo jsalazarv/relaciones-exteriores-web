@@ -35,24 +35,25 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
-  // Router.beforeEach((to, from, next) => {
-  //   const store = useAuthStore();
+  Router.beforeEach((to, from, next) => {
+    const store = useAuthStore();
 
-  //   console.log('[ROUTER BEFORE EACH]', store.isAuthenticated);
-  //   if (to.meta?.public === true) {
-  //     return next();
-  //   }
+    console.log('[ROUTER BEFORE EACH]', store.isAuthenticated);
+    if (to.meta?.public === true) {
+      return next();
+    }
 
-  //   if (to.name === 'login' && store.isAuthenticated) {
-  //     return next({ name: 'dashboard' });
-  //   }
+    console.log('ROUte', to, from, to.name === 'login', store.isAuthenticated);
+    if (to.name === 'login' && store.isAuthenticated) {
+      return next({ name: 'dashboard' });
+    }
 
-  //   if (to.name !== 'login' && !store.isAuthenticated) {
-  //     return next({ name: 'login' });
-  //   }
+    if (to.name !== 'login' && !store.isAuthenticated) {
+      return next({ name: 'login' });
+    }
 
-  //   return next();
-  // });
+    return next();
+  });
 
   return Router;
 });

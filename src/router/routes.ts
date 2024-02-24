@@ -7,6 +7,7 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     component: LoginLayout,
     children: [{ path: '', name: 'login', component: SignIn }],
+    meta: { public: true },
   },
   {
     path: '/',
@@ -16,6 +17,7 @@ const routes: RouteRecordRaw[] = [
         path: '/',
         name: 'dashboard',
         component: () => import('pages/Dashboard/DashboardPage.vue'),
+        meta: { public: false },
       },
     ],
   },
@@ -27,6 +29,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'employees',
         component: () => import('pages/Employees/EmployeesPage.vue'),
+        meta: { public: false },
       },
     ],
   },

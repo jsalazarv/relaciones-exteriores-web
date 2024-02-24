@@ -32,7 +32,7 @@
               size="sm"
               color="grey"
               icon="edit"
-              @click="onEdit(props.row)"
+              @click="onShowModalEdit(props.row)"
             ></q-btn>
             <q-btn
               dense
@@ -48,6 +48,97 @@
       </q-table>
     </div>
 
+    <!-- Edit Dialog -->
+    <q-dialog v-model="showEditDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          Editar empleado
+        </q-card-section>
+        <q-card-section>
+          <div class="row">
+            <div class="col q-mr-sm">
+              <q-input
+                outlined
+                v-model="selectedEmployee.name"
+                label="Nombre"
+                stack-label
+                :dense="false"
+              />
+            </div>
+            <div class="col">
+              <q-input
+                outlined
+                v-model="selectedEmployee.last_name"
+                label="Apellido"
+                stack-label
+                :dense="false"
+              />
+            </div>
+          </div>
+
+          <q-input
+            class="q-mt-sm"
+            outlined
+            v-model="selectedEmployee.email"
+            label="Email"
+            stack-label
+            :dense="false"
+          />
+          <q-input
+            class="q-mt-sm"
+            outlined
+            v-model="selectedEmployee.birthday"
+            label="Fecha de nacimiento"
+            stack-label
+            :dense="false"
+          />
+          <q-input
+            class="q-mt-sm"
+            outlined
+            v-model="selectedEmployee.gender"
+            label="Genero"
+            stack-label
+            :dense="false"
+          />
+          <q-input
+            class="q-mt-sm"
+            outlined
+            v-model="selectedEmployee.rfc"
+            label="RFC"
+            stack-label
+            :dense="false"
+          />
+          <q-input
+            class="q-mt-sm"
+            outlined
+            v-model="selectedEmployee.ssn"
+            label="NSS"
+            stack-label
+            :dense="false"
+          />
+          <q-input
+            class="q-mt-sm"
+            outlined
+            v-model="selectedEmployee.salary"
+            label="Salario"
+            stack-label
+            :dense="false"
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Editar"
+            color="dark"
+            v-close-popup
+            @click="onEditSelectedEmployee(selectedEmployee)"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- Delete Dialog -->
     <q-dialog v-model="showDeleteDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
@@ -61,7 +152,6 @@
             text-color="white"
           />
           <span class="q-ml-sm">
-            <pre>{{ selectedEmployee }}</pre>
             Estas seguro de eliminar a {{ selectedEmployee.name }}
             {{ selectedEmployee.last_name }}
           </span>
@@ -85,12 +175,15 @@
 import { ref } from 'vue';
 import {
   useEmployee,
+  useEmployeeEdit,
   useEmployeeDelete,
   useEmployeeReport,
 } from 'src/composables/useEmployee';
 import { IEmployee } from 'src/entities/employee';
+import { computed } from 'vue';
 
 const { data, refetch } = useEmployee();
+const { mutate: editMutate } = useEmployeeEdit();
 const { mutate: deleteMutate } = useEmployeeDelete();
 const {
   data: reportData,
@@ -98,6 +191,7 @@ const {
   isRefetching: isRefetchingReport,
 } = useEmployeeReport();
 const showDeleteDialog = ref(false);
+const showEditDialog = ref(false);
 const selectedEmployee = ref({} as IEmployee);
 
 interface IColum {
@@ -182,24 +276,27 @@ const columns: IColum[] = [
   },
 ];
 
-const rows = data?.value?.data.map((employee: IEmployee) => ({
-  id: employee.id,
-  name: employee.name,
-  last_name: employee.last_name,
-  email: employee.email,
-  birthday: employee.birthday,
-  gender: employee.gender,
-  rfc: employee.rfc,
-  ssn: employee.ssn,
-  salary: employee.salary,
-}));
+const rows = computed(() => {
+  return data?.value?.data.map((employee: IEmployee) => ({
+    id: employee.id,
+    name: employee.name,
+    last_name: employee.last_name,
+    email: employee.email,
+    birthday: employee.birthday,
+    gender: employee.gender,
+    rfc: employee.rfc,
+    ssn: employee.ssn,
+    salary: employee.salary,
+  }));
+});
 
 const onExport = () => {
   console.log('[EXPORT EXCEL]'); //TODO: Implement export
 };
 
-const onEdit = (employee: IEmployee) => {
-  console.log('[EDIT EMPLOYEE]', employee);
+const onShowModalEdit = (employee: IEmployee) => {
+  showEditDialog.value = true;
+  selectedEmployee.value = employee;
 };
 
 const onShowModalDelete = (employee: IEmployee) => {
@@ -207,17 +304,19 @@ const onShowModalDelete = (employee: IEmployee) => {
   selectedEmployee.value = employee;
 };
 
+const onEditSelectedEmployee = (employee: IEmployee) => {
+  editMutate(employee, {
+    onSuccess: () => {
+      refetch();
+    },
+  });
+  console.log('[EDIT EMPLOYEE]', employee); //TODO: Implement edit
+};
+
 const onDeleteSelectedEmployee = (employee: IEmployee) => {
-  console.log('[DELETE EMPLOYEE]', employee.id);
   deleteMutate(employee.id, {
     onSuccess: () => {
-      console.log('[SE ELIMINO EL EMPLEADO]');
       refetch();
-      // TODO: Show error message in toast or snackbar
-    },
-    onError: (error) => {
-      console.log('[OCURRIO UN ERROR AL ELIMINAR]', error);
-      // TODO: Show error message in toast or snackbar
     },
   });
 };
